@@ -1,9 +1,10 @@
 package interfaces
 
 import (
-	"domain"
 	"fmt"
-	"usecases"
+
+	"github.com/SaladkevichM/go-cleanarchitecture/src/domain"
+	"github.com/SaladkevichM/go-cleanarchitecture/src/usecases"
 )
 
 type DbHandler interface {
@@ -89,6 +90,22 @@ func (repo *DbOrderRepo) Store(order domain.Order) {
 	for _, item := range order.Items {
 		repo.dbHandler.Execute(fmt.Sprintf("INSERT INTO items2orders (item_id, order_id) VALUES ('%d', '%d')", item.Id, order.Id))
 	}
+}
+
+func (repo *DbOrderRepo) GetAll() []domain.Order {
+
+	result := []domain.Order{}
+	row := repo.dbHandler.Query("SELECT id from orders LIMIT 50")
+
+	var id int
+	row.Scan(&id)
+	result = append(result, repo.FindById(id))
+
+	for row.Next() {
+		row.Scan(&id)
+		result = append(result, repo.FindById(id))
+	}
+	return result
 }
 
 func (repo *DbOrderRepo) FindById(id int) domain.Order {

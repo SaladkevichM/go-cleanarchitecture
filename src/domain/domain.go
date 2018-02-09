@@ -17,6 +17,7 @@ type ItemRepository interface {
 type OrderRepository interface {
 	Store(order Order)
 	FindById(id int) Order
+	GetAll() []Order
 }
 
 type Customer struct {

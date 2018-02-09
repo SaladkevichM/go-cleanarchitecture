@@ -1,16 +1,18 @@
 package main
 
 import (
-	"usecases"
-	"interfaces"
-	"infrastructure"
 	"net/http"
+
+	"github.com/SaladkevichM/go-cleanarchitecture/src/infrastructure"
+	"github.com/SaladkevichM/go-cleanarchitecture/src/interfaces"
+	"github.com/SaladkevichM/go-cleanarchitecture/src/usecases"
 )
 
 func main() {
+
 	dbHandler := infrastructure.NewSqliteHandler("/var/tmp/production.sqlite")
 
-	handlers := make(map[string] interfaces.DbHandler)
+	handlers := make(map[string]interfaces.DbHandler)
 	handlers["DbUserRepo"] = dbHandler
 	handlers["DbCustomerRepo"] = dbHandler
 	handlers["DbItemRepo"] = dbHandler
@@ -24,8 +26,13 @@ func main() {
 	webserviceHandler := interfaces.WebserviceHandler{}
 	webserviceHandler.OrderInteractor = orderInteractor
 
+	http.HandleFunc("/all_orders", func(res http.ResponseWriter, req *http.Request) {
+		webserviceHandler.ShowOrders(res, req)
+	})
+
 	http.HandleFunc("/orders", func(res http.ResponseWriter, req *http.Request) {
 		webserviceHandler.ShowOrder(res, req)
 	})
+
 	http.ListenAndServe(":8080", nil)
 }

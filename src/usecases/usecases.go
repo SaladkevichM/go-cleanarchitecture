@@ -1,8 +1,9 @@
 package usecases
 
 import (
-	"domain"
 	"fmt"
+
+	"github.com/SaladkevichM/go-cleanarchitecture/src/domain"
 )
 
 type UserRepository interface {
@@ -31,6 +32,11 @@ type OrderInteractor struct {
 	OrderRepository domain.OrderRepository
 	ItemRepository  domain.ItemRepository
 	Logger          Logger
+}
+
+func (interactor *OrderInteractor) GetAll() ([]domain.Order, error) {
+	orders := interactor.OrderRepository.GetAll()
+	return orders, nil
 }
 
 func (interactor *OrderInteractor) Items(userId, orderId int) ([]Item, error) {

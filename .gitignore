@@ -1,3 +1,5 @@
 src/github.com/
 *.swp
 pkg/
+debug
+go-cleanarchitecture
